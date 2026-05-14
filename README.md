@@ -1,6 +1,6 @@
 # cc-permission-what
 
-> Claude Code 권한 다이얼로그는 **명령어**만 보여주고 **이유**는 안 보여준다. 이 시스템이 그 공백을 메운다 — 모델이 **왜(why)**를, 훅이 **무엇(what)**을 권한 프롬프트 위에 함께 노출한다.
+> Claude Code 권한 다이얼로그는 **명령어**만 보여주고 **이유**는 안 보여준다. 이 시스템이 그 공백을 메운다 — 모델이 왜 **(why)** 를, 훅이 **무엇(what)** 을 권한 프롬프트 위에 함께 노출한다.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Built for Claude Code](https://img.shields.io/badge/built%20for-Claude%20Code-FF6B35)](https://claude.com/claude-code)
