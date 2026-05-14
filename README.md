@@ -1,22 +1,38 @@
 # cc-permission-what
 
-Claude Code 권한 다이얼로그가 명령어만 보여주는 빈약함을 해결하는 **하이브리드 안내 시스템**. 모델은 "왜(why)"를 채팅에 출력하고, PreToolUse 훅은 비자명한 Bash 명령의 "무엇(what)"을 평문 번역해 권한 프롬프트 직전에 노출한다.
+> Claude Code 권한 다이얼로그는 **명령어**만 보여주고 **이유**는 안 보여준다. 이 시스템이 그 공백을 메운다 — 모델이 *왜(why)*를, 훅이 *무엇(what)*을 권한 프롬프트 위에 함께 노출한다.
 
-## 무엇을 해주나
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Built for Claude Code](https://img.shields.io/badge/built%20for-Claude%20Code-FF6B35)](https://claude.com/claude-code)
+![Shell](https://img.shields.io/badge/shell-bash-1f425f?logo=gnu-bash&logoColor=white)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)
 
+## Before / After
+
+**기본 Claude Code 권한 다이얼로그**
 ```
-사용자 요청
-   ↓
-모델: "🎯 목적: 현재 브랜치에 연결된 PR이 있는지 확인"   ← CLAUDE.md 규칙
-   ↓
-Bash(gh pr list ...) 호출
-   ↓
-훅: "[command-hint] 📖 현재 레포의 PR 목록 조회"        ← explain-bash.sh
-   ↓
-권한 다이얼로그 (Yes/No)
-```
+● Bash(gh pr list --state open --json number,title)
 
-`Read`도 "왜 이 파일인가" 한 줄을 강제하고, 파괴적 명령(예: `git reset --hard`)은 `⚠️ 영향 범위`를 함께 출력하도록 Tier로 나뉘어 있다.
+  Do you want to proceed?
+❯ 1. Yes
+  2. No
+```
+이 명령이 무엇을 하는지, 왜 필요한지 사용자가 추측해야 함.
+
+**이 시스템 적용 후**
+```
+🎯 목적: 현재 브랜치에 연결된 오픈 PR이 있는지 확인            ← 모델 (CLAUDE.md 규칙)
+[command-hint] 📖 현재 레포의 PR 목록 조회                       ← 훅 (explain-bash.sh)
+
+● Bash(gh pr list --state open --json number,title)
+
+  Do you want to proceed?
+❯ 1. Yes
+  2. No
+```
+의도(why) + 명령 의미(what)가 다이얼로그 위에 누적되어 한눈에 판단.
+
+`Read`도 "왜 이 파일인가" 한 줄을 강제하고, 파괴적 명령(예: `git reset --hard`)은 `⚠️ 영향 범위(가역성)`까지 출력하도록 Tier로 나뉘어 있다.
 
 ## 빠른 설치
 
@@ -32,7 +48,7 @@ cd cc-permission-what
 - `~/.claude/CLAUDE.md`에 `@import` 줄 추가 (중복이면 스킵)
 - `~/.claude/settings.json` PreToolUse 배열에 훅 항목 추가 (`jq`로 안전 패치, `.bak.<ts>` 백업)
 
-**의존성**: `bash`, `jq`, `grep`.
+**의존성**: `bash`, `jq`, `grep` (`-E` 지원). macOS/Linux 양쪽에서 검증됨 (BSD grep 호환을 위해 정규식에서 리터럴 파이프는 `[|]` 사용).
 
 설치 후 **새 Claude Code 세션**을 시작해야 `@import` 규칙이 로드됨. 훅은 즉시 동작(셸 스크립트).
 
@@ -113,6 +129,13 @@ echo '{"tool_input":{"command":"ls -la"}}' | ~/.claude/hooks/explain-bash.sh
 - **`@import` 모듈화**: CLAUDE.md 본문 비대화 방지 + 규칙만 독립 토글/실험 가능.
 - **결정적 룰셋(LLM 호출 없음)**: 빠르고 무료. 미매칭 케이스는 모델 규칙이 받친다.
 - **차단/안내 책임 분리**: 같은 PreToolUse 매처라도 entry를 분리해 디버깅 격리.
+
+## Contributing
+
+새 패턴 추가, 기존 메시지 다듬기, 다른 OS 환경 검증 모두 환영. Issue/PR 모두 환영.
+
+- 새 패턴 추가 시: `hooks/explain-bash.sh`의 `PATTERNS` 배열에 한 줄 + 우선순위 가이드 준수
+- Tier 규칙 변경 시: `modules/permission-announce.md` 편집 (CLAUDE.md는 건드릴 필요 없음)
 
 ## 라이선스
 
