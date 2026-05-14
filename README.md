@@ -22,7 +22,7 @@
 **이 시스템 적용 후**
 ```
 🎯 목적: 현재 브랜치에 연결된 오픈 PR이 있는지 확인            ← 모델 (CLAUDE.md 규칙)
-[command-hint] 📖 현재 레포의 PR 목록 조회                       ← 훅 (explain-bash.sh)
+[command-hint] 📖 현재 레포의 PR 목록 조회               ← 훅 (explain-bash.sh)
 
 ● Bash(gh pr list --state open --json number,title)
 
